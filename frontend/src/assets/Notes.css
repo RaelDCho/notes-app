@@ -1,0 +1,59 @@
+body {
+  border: 1px solid red;
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.notes {
+  border: 1px solid gold;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 70%;
+  margin: auto;
+}
+
+.notes ul {
+  border: 1px solid black;
+  width: 60%;
+}
+
+.notes li {
+  color: grey;
+  padding: 5px;
+  font-size: 15px;
+  margin-right: 5%;
+  /* border: 1px solid blue; */
+}
+
+li button {
+  /* border: 1px solid aqua; */
+  float: right;
+  width: 20%;
+  max-width: 20%;
+}
+
+.note {
+  color: grey;
+  padding-top: 5px;
+  font-size: 15px;
+}
+
+.notification {
+  background-color: grey;
+  font-size: 20px;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px;
+  width: 60%;
+}
+
+#error {
+  color: #a20101;
+  border: 1px solid #a20101;
+}
+
+#success {
+  color: #005a00;
+  border: 1px solid #005a00;
+}
