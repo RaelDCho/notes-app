@@ -1,13 +1,12 @@
 // const http = require('http')
 const express = require('express')
-const cors = require('cors')
 const app = express()
-
-app.use(express.static('dist'))
-
 // to access data 
 app.use(express.json())
 
+app.use(express.static('dist'))
+
+const cors = require('cors')
 app.use(cors())
 
 let notes = [
@@ -72,23 +71,23 @@ app.post('/api/notes', (request, response) => {
   response.json(note)
 })
 
-app.put('/api/notes/:id', (request, response) => {
-  const id = request.params.id
-  // const notes = notes.map(note => note.id === id ? !note.important : null)
-  // console.log(id)
-  // response.status(204).end()
-  const { content, important } = request.body
-  notes = notes.map(note => {
-    if (note.id === id) {
-      note.content = content
-      note.important = important
+// app.put('/api/notes/:id', (request, response) => {
+//   const id = request.params.id
+//   // const notes = notes.map(note => note.id === id ? !note.important : null)
+//   // console.log(id)
+//   // response.status(204).end()
+//   const { content, important } = request.body
+//   notes = notes.map(note => {
+//     if (note.id === id) {
+//       note.content = content
+//       note.important = important
 
-      console.log(`${note.content} + ${note.important}`)
-      // console.log(`${content} + ${important}`)
-      return response.json(note)
-    }
-  })
-})
+//       console.log(`${note.content} + ${note.important}`)
+//       // console.log(`${content} + ${important}`)
+//       return response.json(note)
+//     }
+//   })
+// })
 
 app.delete('/api/notes/:id', (request, response) => {
   const id = request.params.id
