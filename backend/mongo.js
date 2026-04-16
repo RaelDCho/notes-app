@@ -1,49 +1,26 @@
 const mongoose = require('mongoose')
-
-if (process.argv.length < 3) {
-  console.log('give password as argument')
-  process.exit(1)
-}
+const { MONGODB_URI } = require('./utils/config')
+const assert = require('node:assert')
 
 const password = process.argv[2]
 
-const url = `mongodb+srv://davidcho123456781_db_user:${password}@cluster0.nvtf0je.mongodb.net/noteApp?retryWrites=true&w=majority&appName=Cluster0`
+const url = MONGODB_URI
 
 mongoose.set('strictQuery', false)
 
 mongoose.connect(url, { family: 4 })
 
-const noteSchema = new mongoose.Schema({
-  content: String,
-  important: Boolean
+test('all notes are returned', async () => {
+  const response = await api.get('/api/notes')
+
+  assert.strictEqual(response.body.length, 2)
 })
 
-const Note = mongoose.model('Note', noteSchema)
+test('a specific note is within the returned notes', async () => {
+  const response = await api.get('/api/notes')
 
-// const note = new Note({
-//   content: 'checking this',
-//   important: true
-// })
-
-// note.save().then(result => {
-//   console.log('note saved!')
-//   mongoose.connection.close()
-// })
-
-Note.find({}).then(result => {
-  result.forEach(note => {
-    console.log(note)
-  })
-
-  console.log(result)
-
-  mongoose.connection.close()
+  const contents = response.body.map(e => e.content)
+  assert.strictEqual(contents.includes('HTML is easy'), true)
 })
 
-// Note.find({ important: true }).then(result => {
-//   result.forEach(note => {
-//     console.log(note)
-//   })
-
-//   mongoose.connection.close()
-// })
+mongoose.connection.close()

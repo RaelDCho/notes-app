@@ -1,0 +1,4 @@
+test_templates
+node_modules
+requests
+.env

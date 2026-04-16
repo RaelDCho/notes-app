@@ -34,6 +34,12 @@ const Notes = () => {
       setNotes(notes.concat(returnedNote))
       setNewNote('')
       setNotification(true)
+    }).catch(error => {
+      setErrorMessage(error.response.data.error)
+      setNotification(false)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 3000)
     })
   }
 
@@ -64,7 +70,6 @@ const Notes = () => {
   return (
     <div className='notes'>
       <h1>Notes</h1>
-      <Notification message={errorMessage} notification={notification}/>
       <div>
         <button onClick={() => setShowAll(!showAll)}>
           show {showAll ? 'important' : 'all'}
@@ -77,6 +82,7 @@ const Notes = () => {
         <input value={newNote} placeholder='enter a new note' onChange={handleNoteChange} />
         <button type='submit'>save</button>
       </form>
+      <Notification message={errorMessage} notification={notification}/>
     </div>
   )
 }
