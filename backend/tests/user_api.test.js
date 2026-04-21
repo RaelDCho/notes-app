@@ -26,25 +26,22 @@ describe('when there is initially one user in db', () => {
     const usersAtStart = await helper.usersInDb()
 
     const newUser = {
-      username: 'david',
-      name: 'dvd',
-      password: 'hello123'
+      username: 'mluukkai',
+      name: 'Matti Luukkainen',
+      password: 'salainen',
     }
 
     await api.post('/api/users').send(newUser).expect(201).expect('Content-Type', /application\/json/)
 
     const usersAtEnd = await helper.usersInDb()
-    assert.strictEqual(usersAtStart.length + 1, usersAtEnd.length)
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
 
-    const usernames = usersAtEnd.map(user => user.username)
-    console.log(usernames)
+    const usernames = usersAtEnd.map(u => u.username)
     assert(usernames.includes(newUser.username))
   })
 
   test('creation fails with proper status code and message if username already taken', async () => {
     const usersAtStart = await helper.usersInDb()
-
-    console.log(usersAtStart)
 
     const newUser = {
       username: 'root',
@@ -52,12 +49,28 @@ describe('when there is initially one user in db', () => {
       password: 'hello123'
     }
 
-    console.log(newUser)
-
     const result = await api.post('/api/users').send(newUser).expect(400).expect('Content-Type', /application\/json/)
 
     const usersAtEnd = await helper.usersInDb()
     assert(result.body.error.includes('expected `username` to be unique'))
+
+    assert.strictEqual(usersAtStart.length, usersAtEnd.length)
+  })
+
+  test('creation fails with proper status code and message if username or name is not valid', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'root 123#&@(%@',
+      name: '374923492 ET type',
+      password: 'hello123'
+    }
+
+    const result = await api.post('/api/users').send(newUser).expect(400).expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    assert(result.body.error.includes(`${newUser.username} is not a valid username`))
+    assert(result.body.error.includes(`${newUser.name} is not a valid name`))
 
     assert.strictEqual(usersAtStart.length, usersAtEnd.length)
   })

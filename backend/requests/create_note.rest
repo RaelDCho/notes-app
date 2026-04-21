@@ -5,8 +5,9 @@ POST http://localhost:3001/api/notes
 Content-Type: application/json
 
 {
-  "content": "checking post",
-  "important": false
+  "content": "does this work",
+  "important": false,
+  "userId": "69e0fbc001e17d6e8c3a5345"
 }
 
 
@@ -16,5 +17,5 @@ Content-Type: application/json
 
 {
   "content": "Browser can execute only JavaScript",
-  "important": true
+  "important": true,
 }

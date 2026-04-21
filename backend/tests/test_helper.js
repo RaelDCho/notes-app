@@ -4,11 +4,22 @@ const User = require('../models/user')
 const initialNotes = [
   {
     content: 'HTML is easy',
-    important: false
+    important: false,
+    userId: '69e0fbc001e17d6e8c3a5345'
   },
   {
     content: 'Browser can execute only JavaScript',
-    important: true
+    important: true,
+    userId: '69e0fbc001e17d6e8c3a5345'
+  }
+]
+
+const initialPerson = [
+  {
+    _id: '69e0fbc001e17d6e8c3a5345',
+    username: 'jon_snow',
+    name: 'jon snow',
+    password: 'jonsnowthegoat'
   }
 ]
 
@@ -30,4 +41,4 @@ const usersInDb = async () => {
   return users.map(user => user.toJSON())
 }
 
-module.exports = { initialNotes, nonExistingId, notesInDb, usersInDb }
+module.exports = { initialNotes, initialPerson, nonExistingId, notesInDb, usersInDb }
