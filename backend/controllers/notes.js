@@ -9,19 +9,6 @@ const jwt = require('jsonwebtoken')
 //   })
 // })
 
-/*
-  Function for user authentication
-  Bearer scheme
-  - isolates the token from the authorization header
-*/
-const getTokenFrom = request => {
-  const authorisation = request.get('authorisation')
-  if (authorisation && authorisation.startsWith('Bearer ')) {
-    return authorisation.replace('Bearer ', '')
-  }
-  return null
-}
-
 notesRouter.get('/', async (request, response) => {
   const notes = await Note.find({}).populate('user', { username: 1, name: 1 })
   response.json(notes)
@@ -46,19 +33,9 @@ notesRouter.post('/', async (request, response) => {
   }
 
   /*
-    Creating new notes should only be possible to logged-in users
-    Verifying that user with token exists (getTokenFrom function returns null if no matching user)
-    - validity of token checked by jwt
+    Creating new notes should only be possible to logged-in user
   */
-  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
-  const user = await User.findById(decodedToken.id)
-
-  if (!user) {
-    return response.status(400).json({ error: 'UserId missing or invalid' })
-  }
+  const user = request.user
 
   const note = new Note ({
     content: body.content,
@@ -94,7 +71,13 @@ notesRouter.put('/:id', (request, response, next) => {
 })
 
 notesRouter.delete('/:id', async (request, response) => {
-  await Note.findByIdAndDelete(request.params.id)
+  const user = request.user
+
+  const note = await Note.findById(request.params.id)
+  if (note.user.toString() === user.id.toString()) {
+    user.notes = user.notes.filter(note => !note.id !== request.params.id)
+    await Note.findByIdAndDelete(request.params.id)
+  }
   response.status(204).end()
 })
 
