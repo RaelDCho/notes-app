@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import '../assets/Notes.css'
 
 import Note from './Note'
+import Login from './Login'
 import Notification from './Notification'
 
 import noteService from '../services/notes'
@@ -13,6 +14,8 @@ const Notes = () => {
   const [showAll, setShowAll] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null)
   const [notification, setNotification] = useState(true)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
 
   useEffect(() => {
     noteService.getAll().then(initialNotes => {
@@ -44,6 +47,11 @@ const Notes = () => {
   }
 
   const handleNoteChange = event => setNewNote(event.target.value)
+
+  const handleLogin = event => {
+    event.preventDefault()
+    console.log('handling login')
+  }
 
   const toggleImportanceOf = (id) => {
     const note = notes.find(note => note.id === id)

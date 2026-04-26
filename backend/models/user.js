@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: function(v) {
-        return /^[a-zA-Z0-9_]+$/.test(v)
+        return /^[a-zA-Z0-9_ .-]+$/.test(v)
       },
       message: props => `${props.value} is not a valid username`
     }
@@ -34,6 +34,7 @@ const userSchema = new mongoose.Schema({
 
 userSchema.set('toJSON', {
   transform: (document, returnedObject) => {
+    console.log(returnedObject._id)
     returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id
     delete returnedObject.__v

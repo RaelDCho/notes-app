@@ -74,6 +74,11 @@ notesRouter.delete('/:id', async (request, response) => {
   const user = request.user
 
   const note = await Note.findById(request.params.id)
+
+  // logging to console
+  console.log(`user note in router: ${note.user}`)
+  console.log(`${user.username} in router: ${user.id}`)
+
   if (note.user.toString() === user.id.toString()) {
     user.notes = user.notes.filter(note => !note.id !== request.params.id)
     await Note.findByIdAndDelete(request.params.id)

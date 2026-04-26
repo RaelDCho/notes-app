@@ -1,30 +1,21 @@
-const assert = require('node:assert')
-const { test, describe, after, beforeEach } = require('node:test')
+const assert = require('assert')
+const { test, after, describe, beforeEach } = require('node:test')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
-// const { info } = require('../utils/logger')
 const app = require('../app')
 const Note = require('../models/note')
-const helper = require('./test_helper')
-const { default: notes } = require('../../frontend/src/services/notes')
-
-// user
-const bcrypt = require('bcrypt')
 const User = require('../models/user')
+const helper = require('./test_helper')
 
 const api = supertest(app)
 
 describe('when there are initial notes left', () => {
   // initialise the database
   beforeEach(async () => {
+    // delete all users and notes
     await Note.deleteMany({})
     await User.deleteMany({})
     // console.log('cleared database')
-
-    // initialise user first
-    let userObject = new User(helper.initialPerson[0])
-    await userObject.save()
-    // console.log(userObject)
 
     // const noteObjects = helper.initialNotes.map(note => new Note(note))
     // const promiseArray = noteObjects.map(note => note.save())
@@ -39,6 +30,13 @@ describe('when there are initial notes left', () => {
 
     // mongoose has a specific built-in method for storing multiple:
     // await Note.insertMany(helper.initialNotes)
+
+    // initialise user
+    for (let user of helper.initialUsers) {
+      let userObject = new User(user)
+      await userObject.save()
+    }
+    // console.log(userObject)
 
     // console.log('stored notes in database')
   })
@@ -67,7 +65,10 @@ describe('when there are initial notes left', () => {
       userId: '69e0fbc001e17d6e8c3a5345'
     }
 
-    await api.post('/api/notes').send(newNote).expect(201).expect('Content-Type', /application\/json/)
+    const token = await helper.initialToken()
+
+    await api.post('/api/notes').set('authorisation', `Bearer ${token}`)
+      .send(newNote).expect(201).expect('Content-Type', /application\/json/)
 
     const notesAtEnd = await helper.notesInDb()
     assert.strictEqual(notesAtEnd.length, helper.initialNotes.length + 1)
@@ -76,7 +77,7 @@ describe('when there are initial notes left', () => {
     // assert.strictEqual(response.body.length, helper.initialNotes.length)
 
     const users = await helper.usersInDb()
-    console.log(users)
+    // console.log(users)
 
     const contents = notesAtEnd.map(n => n.content)
     assert(contents.includes(newNote.content))
@@ -87,7 +88,10 @@ describe('when there are initial notes left', () => {
       important: true
     }
 
-    await api.post('/api/notes').send(newNote).expect(400)
+    const token = await helper.initialToken()
+
+    await api.post('/api/notes').set('authorisation', `Bearer ${token}`)
+      .send(newNote).expect(400)
 
     const notesAtEnd = await helper.notesInDb()
 
@@ -107,10 +111,14 @@ describe('when there are initial notes left', () => {
   // deleting a note
   test('deleting a note', async () => {
     const notesAtStart = await helper.notesInDb()
-    const noteToDelete = notesAtStart[0]
+    const noteToDelete = notesAtStart[2]
 
-    await api.delete(`/api/notes/${noteToDelete.id}`).expect(204)
+    const token = await helper.initialToken()
 
+    await api.delete(`/api/notes/${noteToDelete.id}`).set('authorisation', `Bearer ${token}`).expect(204)
+
+    // await api.delete(`/api/notes/${noteToDelete.id}`).expect(204)
+    
     const notesAtEnd = await helper.notesInDb()
 
     const ids = notesAtEnd.map(n => n.id)
