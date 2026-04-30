@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     validate: {
       validator: function(v) {
-        return /^[a-zA-Z ]+$/.test(v)
+        return /^[a-zA-Z -]+$/.test(v)
       },
       message: props => `${props.value} is not a valid name`
     }

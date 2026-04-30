@@ -57,3 +57,17 @@ li button {
   color: #005a00;
   border: 1px solid #005a00;
 }
+
+.login-form {
+  border: 1px solid #00ffc8
+}
+
+.login-form .login-input {
+  border: 1px solid black;
+  /* width: 100% */
+}
+
+.login-file {
+  border: 1px solid #ee00ff;
+  width: 60%
+}
